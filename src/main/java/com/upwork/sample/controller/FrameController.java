@@ -102,10 +102,12 @@ public class FrameController {
      */
     public void removeBug(String idBug) {
         final Bug bug = bugById(idBug);
-        if (this.bugs.contains(bug)) {
-            this.bugs.remove(bug);
+        if (bug != null) {
+            if (this.bugs.contains(bug)) {
+                this.bugs.remove(bug);
+            }
+            this.frame.repaintBugs(this.bugs);
         }
-        this.frame.repaintBugs(this.bugs);
     }
 
     /**
@@ -115,14 +117,16 @@ public class FrameController {
      */
     public void moveToRight(String idBug) {
         final Bug bug = bugById(idBug);
-        if (DIRECTION.RIGHT.equals(bug.getDirection())) {
-            bug.forward();
-        } else {
-            bug.backwards();
+        if (bug != null) {
+            if (DIRECTION.RIGHT.equals(bug.getDirection())) {
+                bug.forward();
+            } else {
+                bug.backwards();
+            }
+            this.frame.repaintBugs(this.bugs);
+            
+            this.logger.log(Level.INFO, String.format("Bug '%s' moved to right (%s)", idBug, bug));
         }
-        this.frame.repaintBugs(this.bugs);
-        
-        this.logger.log(Level.INFO, String.format("Bug '%s' moved to right (%s)", idBug, bug));
     }
 
     /**
@@ -132,14 +136,16 @@ public class FrameController {
      */
     public void moveToLeft(String idBug) {
         final Bug bug = bugById(idBug);
-        if (DIRECTION.RIGHT.equals(bug.getDirection())) {
-            bug.backwards();
-        } else {
-            bug.forward();
+        if (bug != null) {
+            if (DIRECTION.RIGHT.equals(bug.getDirection())) {
+                bug.backwards();
+            } else {
+                bug.forward();
+            }
+            this.frame.repaintBugs(this.bugs);
+            
+            this.logger.log(Level.INFO, String.format("Bug '%s' moved to left (%s)", idBug, bug));
         }
-        this.frame.repaintBugs(this.bugs);
-        
-        this.logger.log(Level.INFO, String.format("Bug '%s' moved to left (%s)", idBug, bug));
     }
 
     /**
@@ -149,8 +155,10 @@ public class FrameController {
      */
     public void turnAround(String idBug) {
         final Bug bug = bugById(idBug);
-        bug.turnAround();
-        this.frame.repaintBugs(this.bugs);
+        if (bug != null) {
+            bug.turnAround();
+            this.frame.repaintBugs(this.bugs);
+        }
     }
 
     /**
