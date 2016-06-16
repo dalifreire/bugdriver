@@ -2,6 +2,7 @@
 A basic test for an upwork job.
 
 [![Build Status](https://travis-ci.org/dalifreire/bugdriver.svg?branch=master)](https://travis-ci.org/dalifreire/bugdriver)
+[![Coverage Status](https://coveralls.io/repos/github/dalifreire/bugdriver/badge.svg?branch=master)](https://coveralls.io/github/dalifreire/bugdriver?branch=master)
 
 *Design and implement a class called Bug, which represents a bug moving along a horizontal wire. The bug can only move in one direction for one unit of distance at a time. The bug can also turn to reverse direction. Create a driver program that instantiates several Bug objects and demonstrates things like moving several times, then turning, then moving the same number of times (back to the original position).*
 
