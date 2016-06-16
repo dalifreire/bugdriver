@@ -7,8 +7,15 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+/**
+ * Swing frame ui.
+ * 
+ * @author Dali Freire - dalifreire@gmail.com
+ * @since 1.0
+ */
 public class Frame extends JFrame {
 
+    private static final long serialVersionUID = 8003686107522955069L;
     private JPanel contentPane;
 
     /**

@@ -16,7 +16,7 @@ import lombok.ToString;
 public class Bug {
 
     @Getter
-    private int id;
+    private String id;
     @Getter
     private int location;
     @Getter
