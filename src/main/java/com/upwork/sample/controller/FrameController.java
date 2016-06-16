@@ -1,8 +1,13 @@
 package com.upwork.sample.controller;
 
+import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.upwork.sample.Bug;
 import com.upwork.sample.Bug.DIRECTION;
@@ -16,12 +21,69 @@ import com.upwork.sample.ui.Frame;
  */
 public class FrameController {
 
+    private final Logger logger = Logger.getLogger(FrameController.class.getName());
     private final Frame frame;
     private final List<Bug> bugs;
 
     public FrameController(Frame frame) {
         this.frame = frame;
         this.bugs = new ArrayList<Bug>();
+        addEvents();
+    }
+    
+
+    /**
+     * Launch the application.
+     */
+    public static void main(String[] args) {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    Frame frame = new Frame();
+                    frame.setVisible(true);
+                    
+                    new FrameController(frame);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+    
+    private void addEvents() {
+        this.frame.getBtnNewBug().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                newBug();
+            }
+        });
+        
+        this.frame.getBtnRemoveBug().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String idBug = (String) FrameController.this.frame.getComboBoxBugs().getSelectedItem();
+                removeBug(idBug);
+            }
+        });
+        
+        this.frame.getBtnMoveToLeft().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String idBug = (String) FrameController.this.frame.getComboBoxBugs().getSelectedItem();
+                moveToLeft(idBug);
+            }
+        });
+        
+        this.frame.getBtnTurnAround().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String idBug = (String) FrameController.this.frame.getComboBoxBugs().getSelectedItem();
+                turnAround(idBug);
+            }
+        });
+        
+        this.frame.getBtnMoveToRight().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String idBug = (String) FrameController.this.frame.getComboBoxBugs().getSelectedItem();
+                moveToRight(idBug);
+            }
+        });
     }
 
     /**
@@ -30,6 +92,7 @@ public class FrameController {
     public void newBug() {
         final Bug bug = new Bug(UUID.randomUUID().toString(), 0, DIRECTION.RIGHT);
         this.bugs.add(bug);
+        this.frame.repaintBugs(this.bugs);
     }
 
     /**
@@ -42,6 +105,7 @@ public class FrameController {
         if (this.bugs.contains(bug)) {
             this.bugs.remove(bug);
         }
+        this.frame.repaintBugs(this.bugs);
     }
 
     /**
@@ -56,6 +120,9 @@ public class FrameController {
         } else {
             bug.backwards();
         }
+        this.frame.repaintBugs(this.bugs);
+        
+        this.logger.log(Level.INFO, String.format("Bug '%s' moved to right (%s)", idBug, bug));
     }
 
     /**
@@ -70,6 +137,9 @@ public class FrameController {
         } else {
             bug.forward();
         }
+        this.frame.repaintBugs(this.bugs);
+        
+        this.logger.log(Level.INFO, String.format("Bug '%s' moved to left (%s)", idBug, bug));
     }
 
     /**
@@ -80,6 +150,7 @@ public class FrameController {
     public void turnAround(String idBug) {
         final Bug bug = bugById(idBug);
         bug.turnAround();
+        this.frame.repaintBugs(this.bugs);
     }
 
     /**
