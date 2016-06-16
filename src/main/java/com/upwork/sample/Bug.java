@@ -22,7 +22,7 @@ public class Bug {
     @Getter
     private DIRECTION direction;
 
-    private enum DIRECTION {
+    public enum DIRECTION {
         LEFT, RIGHT
     };
 

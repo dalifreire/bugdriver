@@ -1,5 +1,5 @@
 # bugdriver
-A basic test for upwork
+A basic test for upwork job
 
 Design and implement a class called Bug, which represents a bug moving along a horizontal wire. The bug can only move in one direction for one unit of distance at a time. The bug can also turn to reverse direction. Create a driver program that instantiates several Bug objects and demonstrates things like moving several times, then turning, then moving the same number of times (back to the original position).
 
