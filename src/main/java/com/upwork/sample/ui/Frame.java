@@ -1,11 +1,11 @@
 package com.upwork.sample.ui;
 
-import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.EventQueue;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
@@ -35,12 +35,12 @@ public class Frame extends JFrame {
 
     private JPanel contentPane;
     private final JPanel panelBugs;
-    private final int xOrigin = 435;
+    private final int xOrigin = 345;
     private final int yOrigin = 18;
 
-    private final ImageIcon bugRightImage = new ImageIcon(new ImageIcon(Frame.class.getResource("/images/bug.png"))
+    private final ImageIcon bugRightImage = new ImageIcon(new ImageIcon(Frame.class.getResource("/images/bug-right.png"))
         .getImage().getScaledInstance(64, 64, Image.SCALE_DEFAULT));
-    private final ImageIcon bugLeftImage = new ImageIcon(new ImageIcon(Frame.class.getResource("/images/bug.png"))
+    private final ImageIcon bugLeftImage = new ImageIcon(new ImageIcon(Frame.class.getResource("/images/bug-left.png"))
         .getImage().getScaledInstance(64, 64, Image.SCALE_DEFAULT));
 
     private final JComboBox<String> comboBoxBugs = new JComboBox<String>();
@@ -51,22 +51,6 @@ public class Frame extends JFrame {
     private final JButton btnMoveToRight = new JButton(">>");
 
     /**
-     * Launch the application.
-     */
-    public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    Frame frame = new Frame();
-                    frame.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    /**
      * Create the frame.
      */
     public Frame() {
@@ -75,6 +59,9 @@ public class Frame extends JFrame {
         setBounds(100, 100, 780, 250);
         setResizable(false);
 
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setLocation((screenSize.width - this.getSize().width)/2, (screenSize.height - this.getSize().height)/2);
+        
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         contentPane.setLayout(null);
@@ -103,7 +90,7 @@ public class Frame extends JFrame {
         });
         contentPane.add(btnNewBug);
 
-        btnRemoveBug.setToolTipText("Remove the selected bug");
+        btnRemoveBug.setToolTipText("Removes the selected bug");
         btnRemoveBug.setBounds(284, 176, 41, 23);
         btnRemoveBug.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {
@@ -162,6 +149,7 @@ public class Frame extends JFrame {
                 g2.draw(new Line2D.Float(0, 50, 754, 50));
             }
         };
+        panelBugs.setLayout(null);
         panelBugs.setBounds(10, 43, 754, 100);
         contentPane.add(panelBugs);
     }
@@ -172,11 +160,13 @@ public class Frame extends JFrame {
         
         this.panelBugs.removeAll();
         this.comboBoxBugs.removeAllItems();
-        for (Bug bug : bugs) {
+        for (final Bug bug : bugs) {
 
+            int newLocation = xOrigin + (bug.getLocation()*10);
+            
             final JLabel b = new JLabel();
             b.setToolTipText(bug.getId());
-            b.setBounds(xOrigin + (bug.getLocation()*64), yOrigin, 64, 64);
+            b.setBounds(newLocation, yOrigin, 64, 64);
             b.setIcon(bug.getDirection() == DIRECTION.RIGHT ? bugRightImage : bugLeftImage);
             b.addMouseListener(new MouseAdapter() {
                 public void mouseEntered(MouseEvent e) {
@@ -184,6 +174,10 @@ public class Frame extends JFrame {
                 }
                 public void mouseExited(MouseEvent e) {
                     setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                }
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    Frame.this.comboBoxBugs.setSelectedItem(bug.getId());
                 }
             });
             

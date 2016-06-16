@@ -1,13 +1,13 @@
 package com.upwork.sample.controller;
 
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.swing.SwingUtilities;
 
 import com.upwork.sample.Bug;
 import com.upwork.sample.Bug.DIRECTION;
@@ -24,64 +24,65 @@ public class FrameController {
     private final Logger logger = Logger.getLogger(FrameController.class.getName());
     private final Frame frame;
     private final List<Bug> bugs;
+    private static int bugCount;
 
     public FrameController(Frame frame) {
         this.frame = frame;
         this.bugs = new ArrayList<Bug>();
-        addEvents();
     }
     
-
-    /**
-     * Launch the application.
-     */
-    public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    Frame frame = new Frame();
-                    frame.setVisible(true);
-                    
-                    new FrameController(frame);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-    
-    private void addEvents() {
+    public void addEvents() {
         this.frame.getBtnNewBug().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                newBug();
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        newBug();
+                    }
+                });
             }
         });
         
         this.frame.getBtnRemoveBug().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String idBug = (String) FrameController.this.frame.getComboBoxBugs().getSelectedItem();
-                removeBug(idBug);
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        String idBug = (String) FrameController.this.frame.getComboBoxBugs().getSelectedItem();
+                        removeBug(idBug);
+                    }
+                });
             }
         });
         
         this.frame.getBtnMoveToLeft().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String idBug = (String) FrameController.this.frame.getComboBoxBugs().getSelectedItem();
-                moveToLeft(idBug);
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        String idBug = (String) FrameController.this.frame.getComboBoxBugs().getSelectedItem();
+                        moveToLeft(idBug);
+                    }
+                });
             }
         });
         
         this.frame.getBtnTurnAround().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String idBug = (String) FrameController.this.frame.getComboBoxBugs().getSelectedItem();
-                turnAround(idBug);
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        String idBug = (String) FrameController.this.frame.getComboBoxBugs().getSelectedItem();
+                        turnAround(idBug);
+                    }
+                });
             }
         });
         
         this.frame.getBtnMoveToRight().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String idBug = (String) FrameController.this.frame.getComboBoxBugs().getSelectedItem();
-                moveToRight(idBug);
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        String idBug = (String) FrameController.this.frame.getComboBoxBugs().getSelectedItem();
+                        moveToRight(idBug);
+                    }
+                });
             }
         });
     }
@@ -90,9 +91,12 @@ public class FrameController {
      * Creates a new bug.
      */
     public void newBug() {
-        final Bug bug = new Bug(UUID.randomUUID().toString(), 0, DIRECTION.RIGHT);
+        final Bug bug = new Bug(String.format("Bug %s", ++bugCount), 0, DIRECTION.RIGHT);
         this.bugs.add(bug);
         this.frame.repaintBugs(this.bugs);
+        this.frame.getComboBoxBugs().setSelectedItem(bug.getId());
+        
+        this.logger.log(Level.INFO, String.format("New bug '%s' added (%s)", bug.getId(), bug));
     }
 
     /**
@@ -107,6 +111,8 @@ public class FrameController {
                 this.bugs.remove(bug);
             }
             this.frame.repaintBugs(this.bugs);
+            
+            this.logger.log(Level.INFO, String.format("Bug '%s' removed (%s)", bug.getId(), bug));
         }
     }
 
@@ -118,11 +124,10 @@ public class FrameController {
     public void moveToRight(String idBug) {
         final Bug bug = bugById(idBug);
         if (bug != null) {
-            if (DIRECTION.RIGHT.equals(bug.getDirection())) {
-                bug.forward();
-            } else {
-                bug.backwards();
+            if (DIRECTION.LEFT.equals(bug.getDirection())) {
+                turnAround(idBug);
             }
+            bug.forward();
             this.frame.repaintBugs(this.bugs);
             
             this.logger.log(Level.INFO, String.format("Bug '%s' moved to right (%s)", idBug, bug));
@@ -138,10 +143,9 @@ public class FrameController {
         final Bug bug = bugById(idBug);
         if (bug != null) {
             if (DIRECTION.RIGHT.equals(bug.getDirection())) {
-                bug.backwards();
-            } else {
-                bug.forward();
+                turnAround(idBug);
             }
+            bug.forward();
             this.frame.repaintBugs(this.bugs);
             
             this.logger.log(Level.INFO, String.format("Bug '%s' moved to left (%s)", idBug, bug));
@@ -158,6 +162,8 @@ public class FrameController {
         if (bug != null) {
             bug.turnAround();
             this.frame.repaintBugs(this.bugs);
+            
+            this.logger.log(Level.INFO, String.format("The bug '%s' was turned (%s)", idBug, bug));
         }
     }
 
